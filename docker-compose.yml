@@ -14,7 +14,9 @@ services:
       - db_data:/var/lib/postgresql/data
 
   app:
-    image: quay.io/skygeario/skygear-server:latest
+    env_file:
+      - .env
+    image: skygeario/skygear-server:${SKYGEAR_VERSION}
     ports:
       - "3001:3000" # Skygear API Endpoint (HTTP)
     volumes:
@@ -26,11 +28,11 @@ services:
       # `db` in the following string should match the name of the database
       # container above.
       DATABASE_URL: postgresql://postgres:@db/postgres?sslmode=disable
-      APP_NAME: my_skygear_app
-      API_KEY: my_skygear_key
-      MASTER_KEY: my_master_key
+      APP_NAME: ${APP_NAME}
+      API_KEY: ${API_KEY}
+      MASTER_KEY: ${MASTER_KEY}
       TOKEN_STORE: jwt
-      TOKEN_STORE_SECRET: my_skygear_jwt_secret
+      TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
       PLUGINS: CHAT
       CHAT_TRANSPORT: zmq
       CHAT_PATH: chat
@@ -54,11 +56,11 @@ services:
       PUBSUB_URL: ws://app:3000/pubsub
       SKYGEAR_ADDRESS: tcp://app:5555
       SKYGEAR_ENDPOINT: http://app:3000
-      APP_NAME: my_skygear_app
-      API_KEY: my_skygear_key
-      MASTER_KEY: my_master_key
-      TOKEN_STORE_SECRET: my_skygear_jwt_secret
-      ASSET_STORE_URL_PREFIX: http://localhost:3000/ 
+      APP_NAME: ${APP_NAME}
+      API_KEY: ${API_KEY}
+      MASTER_KEY: ${MASTER_KEY}
+      TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
+      ASSET_STORE_URL_PREFIX: http://localhost:3000/
 
 # The volume container for skygear
 volumes:
