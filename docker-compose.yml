@@ -45,6 +45,7 @@ services:
   plugin:
     build:
       context: .
+      dockerfile: Dockerfile.development
     links:
       - app
       - db
