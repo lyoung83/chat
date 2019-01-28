@@ -23,6 +23,8 @@ services:
       - app_data:/go/src/app/data
     links:
       - db
+      - plugin
+      - cloud
     command: skygear-server
     environment:
       # `db` in the following string should match the name of the database
@@ -33,10 +35,12 @@ services:
       MASTER_KEY: ${MASTER_KEY}
       TOKEN_STORE: jwt
       TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
-      PLUGINS: CHAT
+      PLUGINS: CHAT,JS
       CHAT_TRANSPORT: zmq
       CHAT_PATH: chat
       CHAT_ARGS: tcp://0.0.0.0:5555
+      JS_TRANSPORT: http
+      JS_PATH: http://cloud:9000
       # GOMAXPROCS - The maximum number of Go threads for execution.
       # When unspecified, the default is the number of CPU available, which
       # is the recommended setting.
@@ -47,7 +51,6 @@ services:
       context: .
       dockerfile: Dockerfile.development
     links:
-      - app
       - db
     volumes:
       - ./:/usr/src/app
@@ -63,6 +66,20 @@ services:
       TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
       ASSET_STORE_URL_PREFIX: http://localhost:3000/
 
+  cloud:
+    image: quay.io/skygeario/skygear-node:canary
+    links:
+      - db
+      - plugin
+    volumes:
+    - .:/usr/src/app
+    environment:
+      DATABASE_URL: postgres://postgres@db/postgres?sslmode=disable
+      PUBSUB_URL: PUBSUB_URL=ws://app:3000/pubsub
+      SKYGEAR_ENDPOINT: http://app:3000
+      API_KEY: ${API_KEY}
+      MASTER_KEY: ${MASTER_KEY}
+      APP_NAME: ${APP_NAME}
 # The volume container for skygear
 volumes:
   db_data:
