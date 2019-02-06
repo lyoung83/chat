@@ -4,14 +4,14 @@ const skygearCloud = require('skygear/cloud');
 function includeme() {
     skygearCloud.op('greeting', function (param) {
         return {
-            'content': 'Hello, ' + param.name,
+            'content': 'Hello, ' + param.args.name,
         };
     }, {
             keyRequired: true,
             userRequired: false,
         });
 
-    skygearCloud.op("hello", () => {
+    skygearCloud.op("hello", function(){
         return { "content": "hello" }
     }, {
         userRequired: false,
