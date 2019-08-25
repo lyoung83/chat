@@ -18,7 +18,7 @@ services:
       - .env
     image: skygeario/skygear-server:${SKYGEAR_VERSION}
     ports:
-      - "3001:3000" # Skygear API Endpoint (HTTP)
+      - "3000:3000" # Skygear API Endpoint (HTTP)
     volumes:
       - app_data:/go/src/app/data
     links:
@@ -35,26 +35,25 @@ services:
       MASTER_KEY: ${MASTER_KEY}
       TOKEN_STORE: jwt
       TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
-      PLUGINS: CHAT,JS
+      PLUGINS: CHAT,CLOUD
       CHAT_TRANSPORT: zmq
       CHAT_PATH: chat
       CHAT_ARGS: tcp://0.0.0.0:5555
-      JS_TRANSPORT: http
-      JS_PATH: http://cloud:9000
+      CLOUD_TRANSPORT: http
+      CLOUD_PATH: http://cloud:9000
       # GOMAXPROCS - The maximum number of Go threads for execution.
       # When unspecified, the default is the number of CPU available, which
       # is the recommended setting.
       #GOMAXPROCS: 1
 
   plugin:
-    build:
-      context: .
-      dockerfile: Dockerfile.development
+    build: chat-plugin
+    ports:
+      - "5555:5555"
     links:
       - db
     volumes:
       - ./:/usr/src/app
-    command: py-skygear chat
     environment:
       DATABASE_URL: postgresql://postgres:@db:5432/postgres?sslmode=disable
       PUBSUB_URL: ws://app:3000/pubsub
@@ -67,7 +66,9 @@ services:
       ASSET_STORE_URL_PREFIX: http://localhost:3000/
 
   cloud:
-    image: quay.io/skygeario/skygear-node:canary
+    build: cloud
+    ports:
+      - "9000:9000"
     links:
       - db
       - plugin

@@ -1,0 +1,65 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: app
+    spec:
+      containers:
+      - args:
+        - skygear-server
+        env:
+        - name: API_KEY
+          value: plugintest123
+        - name: APP_NAME
+          value: plugin_test_local
+        - name: CHAT_ARGS
+          value: tcp://0.0.0.0:5555
+        - name: CHAT_PATH
+          value: chat
+        - name: CHAT_TRANSPORT
+          value: zmq
+        - name: CLOUD_PATH
+          value: http://cloud:9000
+        - name: CLOUD_TRANSPORT
+          value: http
+        - name: DATABASE_URL
+          value: postgresql://postgres:@db/postgres?sslmode=disable
+        - name: MASTER_KEY
+          value: plugintest321
+        - name: PLUGINS
+          value: CHAT,CLOUD
+        - name: SKYGEAR_VERSION
+          value: v1.6.3
+        - name: TOKEN_STORE
+          value: jwt
+        - name: TOKEN_STORE_SECRET
+          value: "1234567890"
+        image: skygeario/skygear-server:v1.6.3
+        name: app
+        ports:
+        - containerPort: 3000
+        - containerPort: 5555
+        resources: {}
+        volumeMounts:
+        - mountPath: /go/src/app/data
+          name: chat-app-data
+      restartPolicy: Always
+      volumes:
+      - name: chat-app-data
+        persistentVolumeClaim:
+          claimName: chat-app-data
+status: {}

@@ -1,0 +1,54 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.17.0 ()
+  creationTimestamp: null
+  labels:
+    io.kompose.service: plugin
+  name: plugin
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.service: plugin
+    spec:
+      containers:
+      - env:
+        - name: API_KEY
+          value: plugintest123
+        - name: APP_NAME
+          value: plugin_test_local
+        - name: ASSET_STORE_URL_PREFIX
+          value: http://localhost:3000/
+        - name: DATABASE_URL
+          value: postgresql://postgres:@db:5432/postgres?sslmode=disable
+        - name: MASTER_KEY
+          value: plugintest321
+        - name: PUBSUB_URL
+          value: ws://app:3000/pubsub
+        - name: SKYGEAR_ADDRESS
+          value: tcp://app:5555
+        - name: SKYGEAR_ENDPOINT
+          value: http://app:3000
+        - name: TOKEN_STORE_SECRET
+          value: "1234567890"
+        image: skygear-python:custom
+        name: plugin
+        ports:
+        - containerPort: 5555
+        resources: {}
+        volumeMounts:
+        - mountPath: /usr/src/app
+          name: plugin-claim0
+      restartPolicy: Always
+      volumes:
+      - name: plugin-claim0
+        persistentVolumeClaim:
+          claimName: plugin-claim0
+status: {}

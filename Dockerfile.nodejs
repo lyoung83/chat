@@ -1,6 +1,0 @@
-FROM quay.io/skygeario/skygear-node:canary
-COPY index.js package.json /usr/src/app/
-EXPOSE 9000
-WORKDIR /usr/src/app
-RUN npm install
-CMD [ "skygear-node" ]
