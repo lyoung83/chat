@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   annotations:
     kompose.cmd: kompose convert
-    kompose.version: 1.17.0 ()
+    kompose.version: 1.18.0 ()
   creationTimestamp: null
   labels:
     io.kompose.service: app
@@ -32,16 +32,12 @@ spec:
           value: chat
         - name: CHAT_TRANSPORT
           value: zmq
-        - name: CLOUD_PATH
-          value: http://cloud:9000
-        - name: CLOUD_TRANSPORT
-          value: http
         - name: DATABASE_URL
           value: postgresql://postgres:@db/postgres?sslmode=disable
         - name: MASTER_KEY
           value: plugintest321
         - name: PLUGINS
-          value: CHAT,CLOUD
+          value: CHAT
         - name: SKYGEAR_VERSION
           value: v1.6.3
         - name: TOKEN_STORE
@@ -52,7 +48,6 @@ spec:
         name: app
         ports:
         - containerPort: 3000
-        - containerPort: 5555
         resources: {}
         volumeMounts:
         - mountPath: /go/src/app/data
