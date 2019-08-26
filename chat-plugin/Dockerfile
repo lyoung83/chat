@@ -9,5 +9,6 @@ alpine-sdk
 RUN pip3 install psycopg2 skygear[zmq]
 COPY . /app
 WORKDIR /app
+RUN pip install -r requirements.txt
 EXPOSE 5555
-CMD [ "py-skygear", "chat" ]
+CMD [ "py-skygear"]

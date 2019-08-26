@@ -24,7 +24,6 @@ services:
     links:
       - db
       - plugin
-      - cloud
     command: skygear-server
     environment:
       # `db` in the following string should match the name of the database
@@ -35,12 +34,10 @@ services:
       MASTER_KEY: ${MASTER_KEY}
       TOKEN_STORE: jwt
       TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
-      PLUGINS: CHAT,CLOUD
+      PLUGINS: CHAT
       CHAT_TRANSPORT: zmq
       CHAT_PATH: chat
       CHAT_ARGS: tcp://0.0.0.0:5555
-      CLOUD_TRANSPORT: http
-      CLOUD_PATH: http://cloud:9000
       # GOMAXPROCS - The maximum number of Go threads for execution.
       # When unspecified, the default is the number of CPU available, which
       # is the recommended setting.
@@ -63,24 +60,15 @@ services:
       API_KEY: ${API_KEY}
       MASTER_KEY: ${MASTER_KEY}
       TOKEN_STORE_SECRET: ${TOKEN_STORE_SECRET}
+      LOAD_MODULES: chat,forgot_password,cloud
       ASSET_STORE_URL_PREFIX: http://localhost:3000/
-
-  cloud:
-    build: cloud
-    ports:
-      - "9000:9000"
-    links:
-      - db
-      - plugin
-    volumes:
-    - .:/usr/src/app
-    environment:
-      DATABASE_URL: postgres://postgres@db/postgres?sslmode=disable
-      PUBSUB_URL: PUBSUB_URL=ws://app:3000/pubsub
-      SKYGEAR_ENDPOINT: http://app:3000
-      API_KEY: ${API_KEY}
-      MASTER_KEY: ${MASTER_KEY}
-      APP_NAME: ${APP_NAME}
+      VERIFY_KEYS: phone,email
+      VERIFY_KEYS_PHONE_PROVIDER: debug
+      VERIFY_KEYS_EMAIL_PROVIDER: debug
+      VERIFY_AUTO_UPDATE: "true"
+      VERIFY_AUTO_SEND_SIGNUP: "true"
+      VERIFY_AUTO_SEND_UPDATE: "true"
+      VERIFY_CRITERIA: "any"
 # The volume container for skygear
 volumes:
   db_data:
